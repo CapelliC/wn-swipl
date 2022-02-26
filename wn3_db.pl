@@ -1,7 +1,7 @@
 /** <module> wn
  *
  *  Incapsulate wordnet files, with precompilation option for faster consulting.
- *	
+ *
  *  Issue ?- load_wn3_relations. to load all relation in memory.
  *  It's slow the first time, when it's compiling, then it's really fast.
  */
@@ -176,7 +176,13 @@ prolog:message(compiling(Table)) -->
 
 test(1) :-
 	schema_wn3_table(s, S),
-	S.table == s,
+	/* S.table == s,
+	 *  syntax error, because of tabling?
+	 *  ?- current_op(X,Y,table).
+	 *  X = 1150,
+	 *  Y = fx.
+	*/ S.'table' == s,
 	length(S.columns, 6).
 
 :- end_tests(wn3_db).
+
