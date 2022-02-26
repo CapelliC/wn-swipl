@@ -84,17 +84,25 @@ load_wn3_relation(Id) :-
 
 %% path_wn3_files(-Path) is det.
 %
-%  get the directory from where data files are read
-%	now just get info from *wn3* key
-%	for instance: put in .plrc
-%		user:file_search_path(wn3, '~/prolog/WN').
-%	and restart
+%   get the directory from where data files are read.
+%   Now just get info from *wn3* key
+%   for instance: put in .plrc or assert
+%   user:file_search_path(wn3, '~/prolog/WN').
+%   and restart.
+%
+%   FIX: if not wn3 key has been defined,
+%   get this module folder and append WN
 %
 %  @arg Path directory path
 %
 path_wn3_files(Path) :-
-	debug_(path_wn3_files(Path)),
-	user:file_search_path(wn3, Path).
+  debug_(path_wn3_files(Path)),
+  (   user:file_search_path(wn3, Path)
+  ->  true
+  ;   module_property(wn3_db, file(ModuleFile)),
+      directory_file_path(Directory, _File, ModuleFile),
+      format(atom(Path), '~s/WN', [Directory])
+  ).
 
 %% path_wn3_file(+Id, -Path) is det.
 %
@@ -126,10 +134,10 @@ schema_wn3_table(Id, Schema) :-
 
 %%%%%%%% private interface from here
 
-schemas(	[s(	synset_id,w_num,word,ss_type,sense_number,tag_count	)/'synset pointers'
+schemas([s(	synset_id,w_num,word,ss_type,sense_number,tag_count	)/'synset pointers'
 	,sk(	synset_id,w_num,sense_key				)/'sense keys'
 	,g(	synset_id,gloss						)/'gloss pointers'
-	,syntax(	synset_id,w_num,syntax					)/'syntactic markers'
+	,syntax(synset_id,w_num,syntax					)/'syntactic markers'
 	,hyp(	synset_id,synset_id					)/'hypernym pointers'
 	,ins(	synset_id,synset_id					)/'instance pointers'
 	,ent(	synset_id,synset_id					)/'entailment pointers'
